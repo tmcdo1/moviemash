@@ -32,6 +32,8 @@ To run the server for development, use `python main.py`.
 
 If adding dependencies to the project, make sure to update the `requirements.txt` with the correct package name and version number. You can use `pip freeze | grep <name>` to get the correct format with version.
 
+The scraper relies on connecting to an Elasticsearch instance. You can use [Docker to create a single-node instance](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html) or [install manually](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html). I would also recommend getting [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html) as well to interact with and visualize Elasticsearch
+
 #### Structure
 
 All static files, such as JS and CSS, go into the `static/` directory.
@@ -39,3 +41,7 @@ All static files, such as JS and CSS, go into the `static/` directory.
 All Jinja templates for the webpage go into the `templates/` directory.
 
 All other code for ranking and logic goes into the `src/` directory.
+
+## Resources
+
+- [Elasticsearch Python](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
