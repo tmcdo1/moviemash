@@ -1,0 +1,2 @@
+docker stop moviemash_es moviemash_kib
+docker rm moviemash_es moviemash_kib

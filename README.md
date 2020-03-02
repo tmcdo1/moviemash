@@ -34,6 +34,8 @@ If adding dependencies to the project, make sure to update the `requirements.txt
 
 The scraper relies on connecting to an Elasticsearch instance. You can use [Docker to create a single-node instance](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html) or [install manually](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html). I would also recommend getting [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html) as well to interact with and visualize Elasticsearch
 
+> If using Mac or Linux, try using `start-docker.sh` and `stop-docker.sh` for starting and stopping the containers for both Elasticsearch and Kibana. It will also handle install
+
 #### Structure
 
 All static files, such as JS and CSS, go into the `static/` directory.
