@@ -1,5 +1,5 @@
 from datetime import datetime
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, ElasticsearchException
 import requests
 from bs4 import BeautifulSoup
 
@@ -12,15 +12,16 @@ def addMovieSynopsis(id, name, synopsis):
         'text': synopsis,
         'timestamp': datetime.now()
     }
-    print(f'Indexing {name}...')
+    print('Indexing {}...'.format(name))
     try:
         res = es.index(index='movie-synopses', id=id, body=synopsis_doc)
         if(res['result'] == 'created'):
-            print(f'{name} is successfully indexed with id {id}')
+            print('{} is successfully indexed with id {}'.format(name, id))
         else:
-            print(f'{name} has been updated')
-    except:
-        print(f'Error occurred while indexing {name}')
+            print('{} has been updated'.format(name))
+    except ElasticsearchException as e:
+        print('Error occurred while indexing {}'.format(name))
+        print("Error:", e.error)
 
 # Full-text query docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 def getMovies(query):
