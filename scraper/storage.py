@@ -3,7 +3,9 @@ from elasticsearch import Elasticsearch, ElasticsearchException
 import requests
 from bs4 import BeautifulSoup
 
-es = Elasticsearch()
+es = Elasticsearch(["https://vddf8x55fy:8ytsgaimiv@movie-mash-3925290296.us-west-2.bonsaisearch.net:443"])
+
+missingSynopsisMessage = "It looks like we don't have a Synopsis for this title yet. Be the first to contribute! Just click the \"Edit page\" button at the bottom of the page or learn more in the Synopsis submission guide."
 
 def addMovieSynopsis(id, name, synopsis):
     synopsis_doc = {
@@ -43,15 +45,17 @@ def formURL(movie_id):
 def getSoup(movie_id):
     response = requests.get(formURL(movie_id))
     if response.status_code == requests.codes.ok:
-        return BeautifulSoup(response.content)
+        return BeautifulSoup(response.content, "html.parser")
     else:
         return None
 
 # Get a "bag of strings" from the soup (not necessarily words-
 # Just strings separated by spaces)
 def extractBagOfStrings(soup):
-    synopsis_soup = soup.find(id="plot-synopsis-content").text
-    return str(synopsis_soup).split(' ')
+    synopsis_soup = soup.find(id="plot-synopsis-content").text.strip()
+    if synopsis_soup == missingSynopsisMessage:
+        return [""]
+    return synopsis_soup.split(' ')
 
 # Catch the words separated by "--" and the like:
 def fixMissingSpace(bag_of_strings, char):
@@ -123,14 +127,17 @@ def scrapeSynopsis(movieID):
 
 # This is here for testing purposes
 if __name__ == '__main__': 
-    # Narnie example:
-    movieID = "tt0363771"
-    synopsis = scrapeSynopsis(movieID)
+    # Narnia example:
+    narniaID = "tt0363771"
+    carmencitaID = "tt0000001"
+    narniaSynopsis = scrapeSynopsis(narniaID)
+    carmencitaSynopsis = scrapeSynopsis(carmencitaID)
 
-    addMovieSynopsis(movieID, "Narnia", synopsis)
+    addMovieSynopsis(narniaID, "Narnia", narniaSynopsis)
+    addMovieSynopsis(carmencitaID, "Carmencita", carmencitaSynopsis)
 
-    addMovieSynopsis('aadsfa-aasdf-adsfadf', 'Cinderella', 'here is a synopsis of a movie. killed')
-    addMovieSynopsis('asdlfk-asdfa-adsfasd', 'The Lion King', 'A lion gets killed and the son takes over')
+    #addMovieSynopsis('aadsfa-aasdf-adsfadf', 'Cinderella', 'here is a synopsis of a movie. killed')
+    #addMovieSynopsis('asdlfk-asdfa-adsfasd', 'The Lion King', 'A lion gets killed and the son takes over')
 
     res = getMovies('son killed')
     print("Got %d Hits:" % res['hits']['total']['value'])
