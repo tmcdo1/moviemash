@@ -1,5 +1,5 @@
 from datetime import datetime
-from elasticsearch import Elasticsearch, ElasticsearchException
+from elasticsearch import Elasticsearch, ElasticsearchException, helpers
 import requests
 from bs4 import BeautifulSoup
 
@@ -21,9 +21,76 @@ def addMovieSynopsis(id, name, synopsis):
             print('{} is successfully indexed with id {}'.format(name, id))
         else:
             print('{} has been updated'.format(name))
-    except ElasticsearchException as e:
+    except:
         print('Error occurred while indexing {}'.format(name))
         print("Error:", e.error)
+
+# Converts this format:
+# movies_data = [("movie 1 id", "movie 1 title", "movie 1 synopsis"),
+#                ("movie 2 id", "movie 2 title", "movie 2 synopsis"),...]
+# to this format:
+# actions = [
+#        {
+#           "_index": "movie-synopses",
+#           "_type": "_doc",
+#           "_id": "movie 1 id",
+#           "_source": {
+#               "movie_name": "movie 1 title",
+#               "movie_id": "movie 1 id"
+#               "text": "movie 1 synopsis",
+#               "timestamp": datetime.now()
+#           }
+#        },
+#        {
+#           "_index": "movie-synopses",
+#           "_type": "_doc",
+#           "_id": "movie 2 id",
+#           "_source": {
+#               "movie_name": "movie 2 title",
+#               "movie_id": "movie 2 id"
+#               "text": "movie 2 synopsis",
+#               "timestamp": datetime.now()
+#           }
+#        },...
+#       ]
+def get_actions(movies_data):
+    actions = []
+    id_idx = 0
+    title_idx = 1
+    synopsis_idx = 2
+    for movie in movies_data:
+        actions.append({
+           "_index": "movie-synopses",
+           "_type": "_doc",
+           "_id": movie[id_idx],
+           "_source": {
+               "movie_name": movie[title_idx],
+               "movie_id": movie[id_idx],
+               "text": movie[synopsis_idx],
+               "timestamp": datetime.now()
+           }
+        })
+    return actions
+
+# Input for this function needs to be an array of tuples/arrays:
+# movies_data = [("movie 1 id", "movie 1 title", "movie 1 synopsis"),
+#                ("movie 2 id", "movie 2 title", "movie 2 synopsis"),...]
+def addBulkMovieSynopses(movies_data):
+    num_movies = len(movies_data)
+    print('Indexing {} movies...'.format(num_movies))
+    movies_actions = get_actions(movies_data)
+    try:
+        for was_success, info in helpers.parallel_bulk(es, movies_actions, thread_count=32):
+            num_successful = info["index"]["_shards"]["successful"]
+            num_failed = info["index"]["_shards"]["failed"]
+            num_total = info["index"]["_shards"]["total"]
+
+            if not was_success:
+                print('Errors uploading in bulk: {} successful {} failed {} total', num_successful, num_failed, num_total)
+            #else:
+            #    print('{} movies successfully indexed '.format(num_successful))
+    except Exception as e:
+        print('Error occurred while indexing {} movies in bulk: {}'.format(num_movies, type(e).__name__))
 
 # Full-text query docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 def getMovies(query):
