@@ -160,6 +160,7 @@
     <style>
         :root {
             --content-width: 50vw;
+            --min-content-width: 580px;
         }
 
         body {
@@ -170,10 +171,11 @@
         #form-card {
             margin-top: 10vh;
             width: var(--content-width);
+            min-width: var(--min-content-width);
         }
 
         #freeform-query > input {
-            width: var(--content-width);
+            min-width: calc(var(--min-content-width)-50px);
         }
 
         #timing {
@@ -186,10 +188,12 @@
 
         #loading > progress {
             width: var(--content-width);
+            min-width: var(--min-content-width);
         }
 
         #movie-results {
             width: var(--content-width);
+            min-width: var(--min-content-width);
             border-radius: 6px;
             box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
             padding: 1.25rem;
