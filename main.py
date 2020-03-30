@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 import scraper.storage as store
 import json
 
@@ -13,22 +13,26 @@ def print_results(res):
 
 @app.route('/')
 def home():
-    examples = [
-                {"id":"tt0081505", "name":"The Shining"},
-                {"id":"tt0363771", "name":"Narnia"},
-                {"id":"tt0000001", "name":"Carmencita"},
-                {"id":"tt2294629", "name":"Frozen"},
-                {"id":"tt1386492", "name":"This Is Not a Movie"}
-            ]
+    # examples = [
+    #             {"id":"tt0081505", "name":"The Shining"},
+    #             {"id":"tt0363771", "name":"Narnia"},
+    #             {"id":"tt0000001", "name":"Carmencita"},
+    #             {"id":"tt2294629", "name":"Frozen"},
+    #             {"id":"tt1386492", "name":"This Is Not a Movie"}
+    #         ]
 
-    for example in examples:
-        synopsis = store.scrapeSynopsis(example["id"])
-        store.addMovieSynopsis(example["id"], example["name"], synopsis)
+    # for example in examples:
+    #     synopsis = store.scrapeSynopsis(example["id"])
+    #     store.addMovieSynopsis(example["id"], example["name"], synopsis)
 
-    results = store.getMovies('ice winter lamp post magic')
-    print_results(results)
+    # results = store.getMovies('ice winter lamp post magic')
+    # print_results(results)
 
     return render_template('index.html')
+
+@app.route('/results', methods=['POST'])
+def get_results():
+    return jsonify({ 'movies': [] })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
