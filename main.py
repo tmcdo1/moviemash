@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import scraper.storage as store
 import json
 
@@ -32,6 +32,13 @@ def home():
 
 @app.route('/results', methods=['POST'])
 def get_results():
+    req_body = request.json
+    query = req_body['query']
+    hours = req_body['hours']
+    minutes = req_body['minutes']
+
+    # TODO: get movies given info
+
     return jsonify({ 'movies': [] })
 
 if __name__ == '__main__':
