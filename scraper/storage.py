@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch, ElasticsearchException, helpers
 import requests
 from bs4 import BeautifulSoup
 
-es = Elasticsearch(["https://vddf8x55fy:8ytsgaimiv@movie-mash-3925290296.us-west-2.bonsaisearch.net:443"])
+es = Elasticsearch(["https://search-moviemash-komc6gxtigbpu4dwoz4rchnzzu.us-east-2.es.amazonaws.com"])
 
 missingSynopsisMessage = "It looks like we don't have a Synopsis for this title yet. Be the first to contribute! Just click the \"Edit page\" button at the bottom of the page or learn more in the Synopsis submission guide."
 
@@ -195,12 +195,12 @@ def scrapeSynopsis(movieID):
 # This is here for testing purposes
 if __name__ == '__main__': 
     # Narnia example:
-    narniaID = "tt0363771"
+    #narniaID = "tt0363771"
     carmencitaID = "tt0000001"
-    narniaSynopsis = scrapeSynopsis(narniaID)
+    #narniaSynopsis = scrapeSynopsis(narniaID)
     carmencitaSynopsis = scrapeSynopsis(carmencitaID)
 
-    addMovieSynopsis(narniaID, "Narnia", narniaSynopsis)
+    #addMovieSynopsis(narniaID, "Narnia", narniaSynopsis)
     addMovieSynopsis(carmencitaID, "Carmencita", carmencitaSynopsis)
 
     #addMovieSynopsis('aadsfa-aasdf-adsfadf', 'Cinderella', 'here is a synopsis of a movie. killed')
