@@ -72,6 +72,29 @@ def get_actions(movies_data):
         })
     return actions
 
+def get_update_actions(movies_data):
+    actions = []
+    id_idx = 0
+    runtime_idx = 1
+    genre_idx = 2
+    rating_idx = 3
+    votes_idx = 4
+    for movie in movies_data:
+        actions.append({
+           "_op_type": "update",
+           "_index": "movie-synopses",
+           "_type": "_doc",
+           "_id": movie[id_idx],
+           "_source": {
+               "movie_runtime": movie[runtime_idx],
+               "movie_genre": movie[genre_idx],
+               "movie_rating": movie[rating_idx],
+               "movie_votes": movie[votes_idx],
+               "timestamp": datetime.now()
+           }
+        })
+    return actions
+
 # Input for this function needs to be an array of tuples/arrays:
 # movies_data = [("movie 1 id", "movie 1 title", "movie 1 synopsis"),
 #                ("movie 2 id", "movie 2 title", "movie 2 synopsis"),...]
@@ -79,6 +102,26 @@ def addBulkMovieSynopses(movies_data):
     num_movies = len(movies_data)
     print('Indexing {} movies...'.format(num_movies))
     movies_actions = get_actions(movies_data)
+    try:
+        for was_success, info in helpers.parallel_bulk(es, movies_actions, thread_count=32):
+            num_successful = info["index"]["_shards"]["successful"]
+            num_failed = info["index"]["_shards"]["failed"]
+            num_total = info["index"]["_shards"]["total"]
+
+            if not was_success:
+                print('Errors uploading in bulk: {} successful {} failed {} total', num_successful, num_failed, num_total)
+            #else:
+            #    print('{} movies successfully indexed '.format(num_successful))
+    except Exception as e:
+        print('Error occurred while indexing {} movies in bulk: {}'.format(num_movies, type(e).__name__))
+
+# Input for this function needs to be an array of tuples/arrays:
+# movies_data = [("movie 1 id", "movie 1 title", "movie 1 synopsis"),
+#                ("movie 2 id", "movie 2 title", "movie 2 synopsis"),...]
+def appendBulkMovieInfo(movies_data):
+    num_movies = len(movies_data)
+    print('Indexing {} movies...'.format(num_movies))
+    movies_actions = get_update_actions(movies_data)
     try:
         for was_success, info in helpers.parallel_bulk(es, movies_actions, thread_count=32):
             num_successful = info["index"]["_shards"]["successful"]
