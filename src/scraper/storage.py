@@ -99,7 +99,7 @@ def getMovies(query):
         'query': {
             'simple_query_string': {
                 'query': query,
-                'fields': ['text']
+                'fields': ['text', 'movie_genre', 'movie_name']
             }
         }
     })
