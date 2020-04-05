@@ -153,11 +153,21 @@
 
                             resultsTable.appendChild(row)
                         }
+                        if(results.length == 0) {
+                            let row = document.createElement('tr')
+                            let message = document.createElement('th')
 
+                            message.innerText = 'No Results Found'
+                            row.appendChild(message)
+
+                            resultsTable.appendChild(row)
+                        }
                         stopLoading()
                     })
                     .catch(err => {
                         // Display error message
+                        stopLoading()
+                        alert('Ran into an issue connecting to server...')
                     })
 
                 return false
