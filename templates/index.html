@@ -137,9 +137,19 @@
                         for(result of results) {
                             let row = document.createElement('tr')
                             let name = document.createElement('th')
+                            let runtime = document.createElement('td')
+
+                            let imdb = document.createElement('td')
+                            let imdbLink = document.createElement('a')
+                            imdbLink.href = `https://www.imdb.com/title/${result.movie_id}/`
+                            imdbLink.innerText = 'Open in IMDB'
+                            imdb.appendChild(imdbLink)
                             
                             name.innerText = result.movie_name
+                            runtime.innerText = `${result.movie_runtime} min`
                             row.appendChild(name)
+                            row.appendChild(runtime)
+                            row.appendChild(imdb)
 
                             resultsTable.appendChild(row)
                         }
