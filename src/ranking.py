@@ -6,29 +6,32 @@ def movie_in_list(movie, movie_list):
         if mov['_id'] == movie['_id']:
             return True
 
-def score(query, time_available):
+def score(query, time_available, preferred_new=False):
     movie_results = []
     query_list = re.split('[,\ !?|]', query)
-    query_it = filter(None, query_list) # Create iterator of words removing any empty strings
+    query_it = list(filter(None, query_list)) # Create list of words removing any empty strings
+    query = ' '.join(query_it)
 
-    ES_SCORE_WEIGHT = 0.9
-    RATING_SCORE_WEIGHT = 0.1
 
-    movies = []
-    max_es_score = 0.0
-    for word in query_it:
-        results = getMovies(word)
-        for movie_result in results['hits']['hits']:
-            if not movie_in_list(movie_result, movies):
-                movies.append(movie_result)
-        max_score = results['hits']['max_score']
-        if max_score and max_score > max_es_score:
-            max_es_score = results['hits']['max_score']
+    ES_SCORE_WEIGHT = 0.6
+    RATING_SCORE_WEIGHT = 0.4
+    NEW_SCORE_WEIGHT = 0.3
 
-    # results = getMovies(query)
+    # movies = []
+    # max_es_score = 0.0
+    # for word in query_it:
+    #     results = getMovies(word)
+    #     for movie_result in results['hits']['hits']:
+    #         if not movie_in_list(movie_result, movies):
+    #             movies.append(movie_result)
+    #     max_score = results['hits']['max_score']
+    #     if max_score and max_score > max_es_score:
+    #         max_es_score = results['hits']['max_score']
 
-    # max_es_score = results['hits']['max_score']
-    # movies = results['hits']['hits']
+    results = getMovies(query)
+
+    max_es_score = results['hits']['max_score']
+    movies = results['hits']['hits']
 
     # Custom scoring modify each movie score based on "movie_rating"
     for movie in movies:
@@ -37,9 +40,21 @@ def score(query, time_available):
             movie_rating = float(movie['_source']['movie_rating'])
         except:
             movie_rating = 0.0
-        movie['_score'] = math.log(ES_SCORE_WEIGHT) + math.log(movie['_score']) - math.log(max_es_score)
+        movie['_score'] = ES_SCORE_WEIGHT * (math.log(movie['_score']) - math.log(max_es_score))
         if movie_rating != 0.0:
-            movie['_score'] = math.log(RATING_SCORE_WEIGHT) + math.log(movie_rating) - math.log(10)
+            movie['_score'] += RATING_SCORE_WEIGHT * (math.log(movie_rating) - math.log(10))
+
+        # If newer movies are preferred, add to score
+        if preferred_new:
+            MOVIE_YEAR_BASE = 1895
+            movie_year = MOVIE_YEAR_BASE
+            try:
+                movie_year = int(movie['_source']['movie_year'])
+            except:
+                movie_year = MOVIE_YEAR_BASE
+            
+            movie['_score'] += NEW_SCORE_WEIGHT * (math.log(movie_year) - math.log(MOVIE_YEAR_BASE))
+        
 
 
     # Sort the movies by _score

@@ -70,6 +70,10 @@
         </section>
 
         <script>
+            async function getMoviePosterLink(movieId) {
+                let results = fetch(`https://www.imdb.com/title/${movieId}/`)
+            }
+
             function addHourOptions() {
                 const hourOptions = 23
                 let select = document.getElementById('num-hours')
