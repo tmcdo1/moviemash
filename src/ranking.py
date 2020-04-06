@@ -13,8 +13,8 @@ def score(query, time_available, preferred_new=False):
     query = ' '.join(query_it)
 
     ES_SCORE_WEIGHT = 0.6
-    RATING_SCORE_WEIGHT = 0.4
-    NEW_SCORE_WEIGHT = 8
+    RATING_SCORE_WEIGHT = 2
+    NEW_SCORE_WEIGHT = 20
 
     # movies = []
     # max_es_score = 0.0
