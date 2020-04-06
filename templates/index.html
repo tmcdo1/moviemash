@@ -48,8 +48,15 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="field">
+                            <label class="checkbox">
+                                <input id="new-movies-checkbox" type="checkbox">
+                                Prefer Newer Movies
+                            </label>
+                        </div>
                 
-                        <input class="button" type="submit" value="Find Movies">
+                        <input id="form-submit" class="button" type="submit" value="Find Movies">
                     </form>
                 </div>
             </div>
@@ -106,7 +113,7 @@
                 document.getElementById('loading').classList.add('is-hidden')
             }
 
-            async function getResults(query, hours, min) {
+            async function getResults(query, hours, min, newMovies) {
                 let response = await fetch('/results', {
                     method: 'POST',
                     mode: 'same-origin',
@@ -116,7 +123,8 @@
                     body: JSON.stringify({
                         query,
                         hours,
-                        minutes: min
+                        minutes: min,
+                        new: newMovies
                     })
                 })
                 let jsonResponse = await response.json()
@@ -131,10 +139,12 @@
                 let hours = hoursSelect.options[hoursSelect.selectedIndex].value
                 let minSelect = document.getElementById('num-min')
                 let mins = minSelect.options[minSelect.selectedIndex].value
+
+                let preferNewMovies = document.getElementById('new-movies-checkbox').checked
                 // Start loading display
                 startLoading()
 
-                getResults(query, hours, mins)
+                getResults(query, hours, mins, preferNewMovies)
                     .then(results => {
                         // Expecting results to be a list of movie objects
                         let resultsTable = document.getElementById('movie-results-body')
@@ -142,6 +152,7 @@
                             let row = document.createElement('tr')
                             let name = document.createElement('th')
                             let runtime = document.createElement('td')
+                            let year = document.createElement('td')
 
                             let imdb = document.createElement('td')
                             let imdbLink = document.createElement('a')
@@ -151,8 +162,10 @@
                             
                             name.innerText = result.movie_name
                             runtime.innerText = `${result.movie_runtime} min`
+                            year.innerText = result.movie_year
                             row.appendChild(name)
                             row.appendChild(runtime)
+                            row.appendChild(year)
                             row.appendChild(imdb)
 
                             resultsTable.appendChild(row)
@@ -202,8 +215,8 @@
             min-width: calc(var(--min-content-width)-50px);
         }
 
-        #timing {
-            margin-bottom: 5vh;
+        #form-submit {
+            margin-top: 5vh;
         }
 
         #timing > div {

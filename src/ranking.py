@@ -12,10 +12,9 @@ def score(query, time_available, preferred_new=False):
     query_it = list(filter(None, query_list)) # Create list of words removing any empty strings
     query = ' '.join(query_it)
 
-
     ES_SCORE_WEIGHT = 0.6
     RATING_SCORE_WEIGHT = 0.4
-    NEW_SCORE_WEIGHT = 0.3
+    NEW_SCORE_WEIGHT = 8
 
     # movies = []
     # max_es_score = 0.0
@@ -46,7 +45,7 @@ def score(query, time_available, preferred_new=False):
 
         # If newer movies are preferred, add to score
         if preferred_new:
-            MOVIE_YEAR_BASE = 1895
+            MOVIE_YEAR_BASE = 1930
             movie_year = MOVIE_YEAR_BASE
             try:
                 movie_year = int(movie['_source']['movie_year'])
@@ -69,6 +68,7 @@ def score(query, time_available, preferred_new=False):
             movie_runtime = sys.maxsize
             
         if movie_runtime < time_available:
+            # print(movie['_source']['movie_name'], movie['_score'])
             movie_results.append(movie['_source'])
             time_available -= movie_runtime
 

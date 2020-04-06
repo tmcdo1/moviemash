@@ -37,9 +37,10 @@ def get_results():
     query = req_body['query']
     hours = int(req_body['hours'])
     minutes = int(req_body['minutes'])
+    new_movies = bool(req_body['new'])
 
     # TODO: get movies given info
-    results = ranking.score(query, hours * 60 + minutes)
+    results = ranking.score(query, hours * 60 + minutes, new_movies)
 
     return jsonify({ 'movies': results })
 
