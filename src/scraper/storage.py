@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 
 es = Elasticsearch(["https://search-moviemash-komc6gxtigbpu4dwoz4rchnzzu.us-east-2.es.amazonaws.com"])
 
+movies_index = "movie-synopses2"
+
 missingSynopsisMessage = "It looks like we don't have a Synopsis for this title yet. Be the first to contribute! Just click the \"Edit page\" button at the bottom of the page or learn more in the Synopsis submission guide."
 
 def addMovieSynopsis(id, name, synopsis):
@@ -16,7 +18,7 @@ def addMovieSynopsis(id, name, synopsis):
     }
     print('Indexing {}...'.format(name))
     try:
-        res = es.index(index='movie-synopses', id=id, body=synopsis_doc)
+        res = es.index(index=movies_index, id=id, body=synopsis_doc)
         if(res['result'] == 'created'):
             print('{} is successfully indexed with id {}'.format(name, id))
         else:
@@ -31,7 +33,7 @@ def addMovieSynopsis(id, name, synopsis):
 # to this format:
 # actions = [
 #        {
-#           "_index": "movie-synopses",
+#           "_index": movies_index,
 #           "_type": "_doc",
 #           "_id": "movie 1 id",
 #           "_source": {
@@ -42,7 +44,7 @@ def addMovieSynopsis(id, name, synopsis):
 #           }
 #        },
 #        {
-#           "_index": "movie-synopses",
+#           "_index": movies_index,
 #           "_type": "_doc",
 #           "_id": "movie 2 id",
 #           "_source": {
@@ -60,7 +62,7 @@ def get_actions(movies_data):
     synopsis_idx = 2
     for movie in movies_data:
         actions.append({
-           "_index": "movie-synopses",
+           "_index": movies_index,
            "_type": "_doc",
            "_id": movie[id_idx],
            "_source": {
@@ -83,7 +85,7 @@ def get_update_actions(movies_data):
     for movie in movies_data:
         actions.append({
            "_op_type": "update",
-           "_index": "movie-synopses",
+           "_index": movies_index,
            "_type": "_doc",
            "_id": movie[id_idx],
            "doc": {
@@ -143,7 +145,7 @@ def appendBulkMovieInfo(movies_data):
 
 # Full-text query docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 def getMovies(query):
-    res = es.search(index='movie-synopses', body={
+    res = es.search(index=movies_index, body={
         'query': {
             'simple_query_string': {
                 'query': query,
