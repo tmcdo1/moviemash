@@ -143,12 +143,11 @@ def appendBulkMovieInfo(movies_data):
 
 # Full-text query docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 def getMovies(query):
-    print(query.split(' '))
     res = es.search(index='movie-synopses', body={
         'query': {
             'simple_query_string': {
                 'query': query,
-                'fields': ['text']
+                'fields': ['text', 'movie_genre', 'movie_name']
             }
         }
     })
@@ -245,16 +244,18 @@ def scrapeSynopsis(movieID):
 if __name__ == '__main__': 
     # Narnia example:
     #narniaID = "tt0363771"
-    carmencitaID = "tt0000001"
+    # carmencitaID = "tt0000001"
     #narniaSynopsis = scrapeSynopsis(narniaID)
-    carmencitaSynopsis = scrapeSynopsis(carmencitaID)
+    # carmencitaSynopsis = scrapeSynopsis(carmencitaID)
 
     #addMovieSynopsis(narniaID, "Narnia", narniaSynopsis)
-    addMovieSynopsis(carmencitaID, "Carmencita", carmencitaSynopsis)
+    # addMovieSynopsis(carmencitaID, "Carmencita", carmencitaSynopsis)
 
     #addMovieSynopsis('aadsfa-aasdf-adsfadf', 'Cinderella', 'here is a synopsis of a movie. killed')
     #addMovieSynopsis('asdlfk-asdfa-adsfasd', 'The Lion King', 'A lion gets killed and the son takes over')
 
     res = getMovies('son killed')
     print("Got %d Hits:" % res['hits']['total']['value'])
-    print(res)
+    print('Max score:', res['hits']['max_score'])
+    print(res['hits']['hits'][0])
+

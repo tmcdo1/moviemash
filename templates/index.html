@@ -48,8 +48,15 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="field">
+                            <label class="checkbox">
+                                <input id="new-movies-checkbox" type="checkbox">
+                                Prefer Newer Movies
+                            </label>
+                        </div>
                 
-                        <input class="button" type="submit" value="Find Movies">
+                        <input id="form-submit" class="button" type="submit" value="Find Movies">
                     </form>
                 </div>
             </div>
@@ -70,6 +77,10 @@
         </section>
 
         <script>
+            async function getMoviePosterLink(movieId) {
+                let results = fetch(`https://www.imdb.com/title/${movieId}/`)
+            }
+
             function addHourOptions() {
                 const hourOptions = 23
                 let select = document.getElementById('num-hours')
@@ -102,7 +113,7 @@
                 document.getElementById('loading').classList.add('is-hidden')
             }
 
-            async function getResults(query, hours, min) {
+            async function getResults(query, hours, min, newMovies) {
                 let response = await fetch('/results', {
                     method: 'POST',
                     mode: 'same-origin',
@@ -112,7 +123,8 @@
                     body: JSON.stringify({
                         query,
                         hours,
-                        minutes: min
+                        minutes: min,
+                        new: newMovies
                     })
                 })
                 let jsonResponse = await response.json()
@@ -127,27 +139,52 @@
                 let hours = hoursSelect.options[hoursSelect.selectedIndex].value
                 let minSelect = document.getElementById('num-min')
                 let mins = minSelect.options[minSelect.selectedIndex].value
+
+                let preferNewMovies = document.getElementById('new-movies-checkbox').checked
                 // Start loading display
                 startLoading()
 
-                getResults(query, hours, mins)
+                getResults(query, hours, mins, preferNewMovies)
                     .then(results => {
                         // Expecting results to be a list of movie objects
                         let resultsTable = document.getElementById('movie-results-body')
                         for(result of results) {
                             let row = document.createElement('tr')
                             let name = document.createElement('th')
+                            let runtime = document.createElement('td')
+                            let year = document.createElement('td')
+
+                            let imdb = document.createElement('td')
+                            let imdbLink = document.createElement('a')
+                            imdbLink.href = `https://www.imdb.com/title/${result.movie_id}/`
+                            imdbLink.innerText = 'Open in IMDB'
+                            imdb.appendChild(imdbLink)
                             
                             name.innerText = result.movie_name
+                            runtime.innerText = `${result.movie_runtime} min`
+                            year.innerText = result.movie_year
                             row.appendChild(name)
+                            row.appendChild(runtime)
+                            row.appendChild(year)
+                            row.appendChild(imdb)
 
                             resultsTable.appendChild(row)
                         }
+                        if(results.length == 0) {
+                            let row = document.createElement('tr')
+                            let message = document.createElement('th')
 
+                            message.innerText = 'No Results Found'
+                            row.appendChild(message)
+
+                            resultsTable.appendChild(row)
+                        }
                         stopLoading()
                     })
                     .catch(err => {
                         // Display error message
+                        stopLoading()
+                        alert('Ran into an issue connecting to server...')
                     })
 
                 return false
@@ -165,7 +202,8 @@
 
         body {
             background-image: linear-gradient(to top, #d299c2 0%, #fef9d7 100%);
-            height: 100vh;
+            height: fit-content;
+            min-height: 100vh;
         }
 
         #form-card {
@@ -178,8 +216,8 @@
             min-width: calc(var(--min-content-width)-50px);
         }
 
-        #timing {
-            margin-bottom: 5vh;
+        #form-submit {
+            margin-top: 5vh;
         }
 
         #timing > div {

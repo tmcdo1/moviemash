@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
-import scraper.storage as store
+import src.scraper.storage as store
+import src.ranking as ranking
 import json
 
 app = Flask(__name__)
@@ -34,12 +35,14 @@ def home():
 def get_results():
     req_body = request.json
     query = req_body['query']
-    hours = req_body['hours']
-    minutes = req_body['minutes']
+    hours = int(req_body['hours'])
+    minutes = int(req_body['minutes'])
+    new_movies = bool(req_body['new'])
 
     # TODO: get movies given info
+    results = ranking.score(query, hours * 60 + minutes, new_movies)
 
-    return jsonify({ 'movies': [] })
+    return jsonify({ 'movies': results })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
