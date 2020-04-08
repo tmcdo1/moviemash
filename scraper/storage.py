@@ -79,17 +79,19 @@ def get_update_actions(movies_data):
     genre_idx = 2
     rating_idx = 3
     votes_idx = 4
+    year_idx = 5
     for movie in movies_data:
         actions.append({
            "_op_type": "update",
            "_index": "movie-synopses",
            "_type": "_doc",
            "_id": movie[id_idx],
-           "_source": {
+           "doc": {
                "movie_runtime": movie[runtime_idx],
                "movie_genre": movie[genre_idx],
                "movie_rating": movie[rating_idx],
                "movie_votes": movie[votes_idx],
+               "movie_year": movie[year_idx],
                "timestamp": datetime.now()
            }
         })
@@ -124,9 +126,9 @@ def appendBulkMovieInfo(movies_data):
     movies_actions = get_update_actions(movies_data)
     try:
         for was_success, info in helpers.parallel_bulk(es, movies_actions, thread_count=32):
-            num_successful = info["index"]["_shards"]["successful"]
-            num_failed = info["index"]["_shards"]["failed"]
-            num_total = info["index"]["_shards"]["total"]
+            num_successful = info["update"]["_shards"]["successful"]
+            num_failed = info["update"]["_shards"]["failed"]
+            num_total = info["update"]["_shards"]["total"]
 
             if not was_success:
                 print('Errors uploading in bulk: {} successful {} failed {} total', num_successful, num_failed, num_total)
@@ -134,6 +136,10 @@ def appendBulkMovieInfo(movies_data):
             #    print('{} movies successfully indexed '.format(num_successful))
     except Exception as e:
         print('Error occurred while indexing {} movies in bulk: {}'.format(num_movies, type(e).__name__))
+        file = open('out.txt','w+')
+        file.write(str(e))
+        file.close()
+        exit()
 
 # Full-text query docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 def getMovies(query):

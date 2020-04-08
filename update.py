@@ -13,6 +13,7 @@ movieRuntime = 3
 movieGenres = 4
 movieRating = 5
 movieVotes = 6
+movieYear = 7
 
 num_indexed = 0
 while True:
@@ -27,17 +28,38 @@ while True:
         entries = [entry.strip() for entry in entries]
 
         thisMovieID = entries[movieID]
-        thisMovieRuntime = entries[movieRuntime]
-        thisMovieGenre = entries[movieGenres]
-        if (len(entries) == 7):
-            thisMovieRating = entries[movieRating]
-            thisMovieVotes = entries[movieVotes]
+        if (entries[movieRuntime] == '\\N'):
+            thisMovieRuntime = None
         else:
-            thisMovieRating = '\\N'
-            thisMovieVotes = '\\N'
+            thisMovieRuntime = int(entries[movieRuntime])
 
-        movie_data.append((thisMovieID, thisMovieRuntime, thisMovieGenre, thisMovieRating, thisMovieVotes))
+        if (entries[movieGenres] == '\\N'):
+            thisMovieGenre = None
+        else:
+            thisMovieGenre = entries[movieGenres].split(',')
+
+        if (len(entries) == 8):
+            if (entries[movieYear] == '\\N'):
+                thisMovieYear = None
+            else:
+                thisMovieYear = int(entries[movieYear])
+            thisMovieRating = float(entries[movieRating])
+            thisMovieVotes = int(entries[movieVotes])
+        elif (len(entries) == 7):
+            print('error with length:')
+            print(entries)
+            exit()
+        else:
+            if (entries[movieYear-2] == '\\N'):
+                thisMovieYear = None
+            else:
+                thisMovieYear = int(entries[movieYear-2])
+            thisMovieRating = None
+            thisMovieVotes = None
+
+        movie_data.append((thisMovieID, thisMovieRuntime, thisMovieGenre, thisMovieRating, thisMovieVotes, thisMovieYear))
         num_indexed += 1
+    print("Indexing last " + str(len(movie_data)) + " pages...")
     if len(movie_data) == 0:
         break
     elif len(movie_data) < num_at_a_time:
