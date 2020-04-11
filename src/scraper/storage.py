@@ -154,6 +154,45 @@ def getMovies(query):
         }
     })
     return res
+
+def getMoviesWithGenres(query, genres):
+    res = es.search(index=movies_index, body={
+        "query" : {
+            "bool": {
+                "must": {
+                    "simple_query_string": {
+                        "query": query,
+                        "fields": ["text", "movie_genre", "movie_name"]
+                    }
+                },
+                "filter": {
+                    "terms" : {
+                        "movie_genre.keyword": genres,
+                        "boost" : 1.0
+                    }
+                }
+            }
+        }
+    })
+    return res
+
+def getGenres():
+    res = es.search(index=movies_index, body={
+        'size': 0,
+        'aggs': {
+            'genres': {
+                'terms': {
+                    'field': 'movie_genre.keyword'
+                }
+            }
+        }
+    })
+    buckets = res['aggregations']['genres']['buckets']
+    genres = []
+    for bucket in buckets:
+        genres.append(bucket['key'])
+
+    return genres
     
 # This might be up for experimentation
 def formURL(movie_id):

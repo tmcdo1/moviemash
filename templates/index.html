@@ -50,6 +50,14 @@
                         </div>
 
                         <div class="field">
+                            <label class="label" for="">What genres would you like?</label>
+                            <div class="select is-multiple">
+                                <select id="genre-select" multiple>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
                             <label class="checkbox">
                                 <input id="new-movies-checkbox" type="checkbox">
                                 Prefer Newer Movies
@@ -79,6 +87,21 @@
         <script>
             async function getMoviePosterLink(movieId) {
                 let results = fetch(`https://www.imdb.com/title/${movieId}/`)
+            }
+
+            async function getGenres() {
+                let res = await fetch('/genres')
+                let resJson = await res.json()
+
+                let genres = resJson.genres
+                let genreSelect = document.getElementById('genre-select')
+
+                for(let genre of genres) {
+                    let option = document.createElement('option')
+                    option.value = genre
+                    option.innerText = genre
+                    genreSelect.appendChild(option)
+                }
             }
 
             function addHourOptions() {
@@ -113,7 +136,7 @@
                 document.getElementById('loading').classList.add('is-hidden')
             }
 
-            async function getResults(query, hours, min, newMovies) {
+            async function getResults(query, hours, min, newMovies, genres) {
                 let response = await fetch('/results', {
                     method: 'POST',
                     mode: 'same-origin',
@@ -124,13 +147,13 @@
                         query,
                         hours,
                         minutes: min,
-                        new: newMovies
+                        new: newMovies,
+                        genres
                     })
                 })
                 let jsonResponse = await response.json()
                 return jsonResponse.movies
             }
-
 
             function submitForm() {
                 // Get the info from the form
@@ -140,11 +163,18 @@
                 let minSelect = document.getElementById('num-min')
                 let mins = minSelect.options[minSelect.selectedIndex].value
 
+                // Get selected genres
+                let selectedGenres = []
+                let genreSelect = document.getElementById('genre-select')
+                for(let option of genreSelect.selectedOptions) {
+                    selectedGenres.push(option.value)
+                }
+
                 let preferNewMovies = document.getElementById('new-movies-checkbox').checked
                 // Start loading display
                 startLoading()
 
-                getResults(query, hours, mins, preferNewMovies)
+                getResults(query, hours, mins, preferNewMovies, selectedGenres)
                     .then(results => {
                         // Expecting results to be a list of movie objects
                         let resultsTable = document.getElementById('movie-results-body')
@@ -190,6 +220,7 @@
                 return false
             }
 
+            getGenres()
             addHourOptions()
             addMinuteOptions()
         </script>
@@ -235,6 +266,10 @@
             border-radius: 6px;
             box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
             padding: 1.25rem;
+        }
+
+        #genre-select {
+            width: 300px;
         }
     </style>
 </html>

@@ -1,4 +1,4 @@
-from src.scraper.storage import getMovies
+from src.scraper.storage import getMovies, getMoviesWithGenres
 import math, sys, re
 
 def movie_in_list(movie, movie_list):
@@ -6,7 +6,7 @@ def movie_in_list(movie, movie_list):
         if mov['_id'] == movie['_id']:
             return True
 
-def score(query, time_available, preferred_new=False):
+def score(query, time_available, preferred_new=False, genres=[]):
     movie_results = []
     query_list = re.split('[,\ !?|]', query)
     query_it = list(filter(None, query_list)) # Create list of words removing any empty strings
@@ -27,7 +27,11 @@ def score(query, time_available, preferred_new=False):
     #     if max_score and max_score > max_es_score:
     #         max_es_score = results['hits']['max_score']
 
-    results = getMovies(query)
+    results = {}
+    if len(genres) == 0:
+        results = getMovies(query)
+    else:
+        results = getMoviesWithGenres(query, genres)
 
     max_es_score = results['hits']['max_score']
     movies = results['hits']['hits']

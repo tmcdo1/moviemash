@@ -31,6 +31,10 @@ def home():
 
     return render_template('index.html')
 
+@app.route('/genres', methods=['GET'])
+def get_genres():
+    return jsonify({ 'genres': store.getGenres() })
+
 @app.route('/results', methods=['POST'])
 def get_results():
     req_body = request.json
@@ -38,9 +42,9 @@ def get_results():
     hours = int(req_body['hours'])
     minutes = int(req_body['minutes'])
     new_movies = bool(req_body['new'])
+    genres = req_body['genres']
 
-    # TODO: get movies given info
-    results = ranking.score(query, hours * 60 + minutes, new_movies)
+    results = ranking.score(query, hours * 60 + minutes, new_movies, genres)
 
     return jsonify({ 'movies': results })
 
