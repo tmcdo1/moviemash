@@ -9,6 +9,20 @@ movies_index = "movie-synopses2"
 
 missingSynopsisMessage = "It looks like we don't have a Synopsis for this title yet. Be the first to contribute! Just click the \"Edit page\" button at the bottom of the page or learn more in the Synopsis submission guide."
 
+def findMoviesByID(id_list):
+    docs_returned = es.mget(index=movies_index, body={"ids":id_list})
+    ret_ids = []
+    for doc in docs_returned["docs"]:
+        ret_ids.append(doc["_id"])
+    for id in id_list:
+        if id not in ret_ids:
+            print("ID", id, "not found")
+            return False
+    if len(ret_ids) != len(id_list):
+        return False
+    
+    return True
+
 def addMovieSynopsis(id, name, synopsis):
     synopsis_doc = {
         'movie_id': id,
@@ -107,15 +121,17 @@ def addBulkMovieSynopses(movies_data):
     print('Indexing {} movies...'.format(num_movies))
     movies_actions = get_actions(movies_data)
     try:
+        total_successful = 0
         for was_success, info in helpers.parallel_bulk(es, movies_actions, thread_count=32):
             num_successful = info["index"]["_shards"]["successful"]
             num_failed = info["index"]["_shards"]["failed"]
             num_total = info["index"]["_shards"]["total"]
 
             if not was_success:
-                print('Errors uploading in bulk: {} successful {} failed {} total', num_successful, num_failed, num_total)
-            #else:
-            #    print('{} movies successfully indexed '.format(num_successful))
+                print('Errors uploading in bulk: {} successful {} failed {} total. Info: {}', num_successful, num_failed, num_total, info)
+            else:
+                total_successful += 1
+        print('{} movies successfully indexed '.format(total_successful))
     except Exception as e:
         print('Error occurred while indexing {} movies in bulk: {}'.format(num_movies, type(e).__name__))
 
