@@ -38,6 +38,8 @@ Visit the page in your browser and enjoy!
 
 Run the scraper to insert movies into the database and scrape movie synopses from IMDB
 
+
+
 #### Dependencies
 
 If adding dependencies to the project, make sure to update the `requirements.txt` with the correct package name and version number. You can use `pip freeze | grep <name>` to get the correct format with version.
