@@ -8,7 +8,7 @@ def movie_in_list(movie, movie_list):
 
 def score(query, time_available, preferred_new=False, genres=[]):
     movie_results = []
-    query_list = re.split('[,\ !?|]\+\-', query)
+    query_list = re.split('[,\ !?|]\+\-\~', query)
     query_it = list(filter(None, query_list)) # Create list of words removing any empty strings
     query = ' '.join(query_it)
 
