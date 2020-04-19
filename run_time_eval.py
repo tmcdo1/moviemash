@@ -8,7 +8,7 @@ queries = [
     'kidnapping child'
 ]
 
-time_availables = [100, 150, 200, 250, 300, 400, 450, 500, 550, 600, 650, 700] # in minutes
+time_availables = [100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700] # in minutes
 
 def display_result(time_label, time_diff):
     print(f'Average Time Difference for {time_label}')
