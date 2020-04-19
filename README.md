@@ -38,7 +38,11 @@ Visit the page in your browser and enjoy!
 
 Run the scraper to insert movies into the database and scrape movie synopses from IMDB
 
+#### Running the time evaluation script
 
+To evaluate the use of time for the project, there is a script that uses somewhat random but vague queries, and identifies the difference between the time input and the filled up time.
+
+`python run_time_eval.py`
 
 #### Dependencies
 
