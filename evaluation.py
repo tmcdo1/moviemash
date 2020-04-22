@@ -18,6 +18,9 @@ def normalizeish(mylist):
     return mylist
 
 def main():
+    for arg in sys.argv[1:]:
+        hours = int(arg)
+
     for our_query in sys.stdin:
         if our_query == None:
             break
