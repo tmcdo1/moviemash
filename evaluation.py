@@ -39,8 +39,8 @@ def main():
                 ndcg_scores.append(0)
                 continue
 
-            #print(our_results)
-            #print(gt)
+            #print(len(our_results))
+            #print(len(gt))
 
             last_movie = our_results[len(our_results)-1]
             for i in range(len(gt)):

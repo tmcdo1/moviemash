@@ -1,2 +1,2 @@
 
-cat keywords.txt | python evaluation.py > keywords_results/results_$1.tsv
+cat queries.txt | python evaluation.py 

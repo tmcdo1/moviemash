@@ -169,7 +169,7 @@ def getMovies(query):
                 'fields': ['text', 'movie_genre', 'movie_name']
             }
         }
-    })
+    }, size=100)
     return res
 
 def getMoviesWithGenres(query, genres):
@@ -190,7 +190,7 @@ def getMoviesWithGenres(query, genres):
                 }
             }
         }
-    })
+    }, size=100)
     return res
 
 def getGenres():
