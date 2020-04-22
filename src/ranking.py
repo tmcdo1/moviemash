@@ -108,6 +108,21 @@ def score_with_gt(query, time_available, preferred_new=False, genres=[]):
     max_es_score = results['hits']['max_score']
     movies = results['hits']['hits']
 
+    # Remove movies whose runtime are not known    
+    movies_to_remove = []
+    movies
+    for movie in movies:
+        if not 'movie_runtime' in movie['_source']:
+            movies_to_remove.append(movie)
+        elif movie['_source']['movie_runtime'] == None:
+            movies_to_remove.append(movie)
+
+    for movie_to_remove in movies_to_remove:
+        for movie in movies:
+            if movie['_id'] == movie_to_remove['_id']:
+                movies.remove(movie)
+                break
+
     # Custom scoring modify each movie score based on "movie_rating"
     for movie in movies:
         movie_rating = 0.0
