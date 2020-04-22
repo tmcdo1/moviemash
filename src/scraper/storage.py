@@ -134,6 +134,7 @@ def addBulkMovieSynopses(movies_data):
         print('{} movies successfully indexed '.format(total_successful))
     except Exception as e:
         print('Error occurred while indexing {} movies in bulk: {}'.format(num_movies, type(e).__name__))
+        print(str(e))
 
 # Input for this function needs to be an array of tuples/arrays:
 # movies_data = [("movie 1 id", "movie 1 title", "movie 1 synopsis"),

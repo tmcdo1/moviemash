@@ -15,12 +15,12 @@ genres = 4
 
 num_indexed = 0
 lines_read = 0
-starting_line = 210000
-ending_line = 250000
+starting_line = 444000
+ending_line = 446000
 while True:
     movie_data = []
     num_at_a_time = 1000
-    print("Starting " + str(num_indexed) + " of " + str(ending_line) + "...")
+    print("Starting " + str(num_indexed) + "...")
     for j in range(num_at_a_time):
         line = file.readline()
         if line == '' or lines_read > ending_line:
@@ -38,7 +38,7 @@ while True:
         num_indexed += 1
         lines_read += 1
         if num_indexed % 100 == 0:
-            print(str(lines_read)+" of "+str(ending_line))
+            print(str(num_indexed + "...")
     print("... finished scraping page " + str(num_indexed))
     print("Indexing last " + str(len(movie_data)) + " pages...")
     if len(movie_data) == 0:
@@ -47,7 +47,7 @@ while True:
         store.addBulkMovieSynopses(movie_data)
         break
     store.addBulkMovieSynopses(movie_data)
-    print("..." + str(num_indexed) + " of " + str(ending_line - starting_line) + " pages complete")
+    print("..." + str(num_indexed) + " of " + str(ending_line) + " pages complete")
 
 print("Indexed " + str(num_indexed) + " movies")
 file.close()
