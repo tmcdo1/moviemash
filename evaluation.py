@@ -20,9 +20,9 @@ def main():
     for arg in sys.argv[1:]:
         hours = int(arg)
 
-    possible_hours = [2, 4, 8, 10, 15, 20, 25, 30, 50, 100]
+    possible_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 10, 21, 22, 23, 24]
 
-    line = "Query\t"
+    line = "IMDB Keyword Query\t"
     for h in possible_hours:
         line += str(h) + "\t"
     print line
