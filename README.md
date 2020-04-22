@@ -24,9 +24,25 @@ Then, use `source env/bin/activate` to enter the environment.
 
 Install the necessary packages: `pip install -r requirements.txt`
 
-#### Running the server
+#### Running the application
 
 To run the server for development, use `python main.py`.
+
+To run the server for production, use `gunicorn --bind 0.0.0.0:5050 wsgi`
+
+> Use whatever port and location you need
+
+Visit the page in your browser and enjoy!
+
+#### Running the scraper and other data population
+
+Run the scraper to insert movies into the database and scrape movie synopses from IMDB
+
+#### Running the time evaluation script
+
+To evaluate the use of time for the project, there is a script that uses somewhat random but vague queries, and identifies the difference between the time input and the filled up time.
+
+`python run_time_eval.py`
 
 #### Dependencies
 
@@ -35,6 +51,8 @@ If adding dependencies to the project, make sure to update the `requirements.txt
 The scraper relies on connecting to an Elasticsearch instance. You can use [Docker to create a single-node instance](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html) or [install manually](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html). I would also recommend getting [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html) as well to interact with and visualize Elasticsearch
 
 > If using Mac or Linux, try using `start-docker.sh` and `stop-docker.sh` for starting and stopping the containers for both Elasticsearch and Kibana. It will also handle install
+
+For this project, we use an Elasticsearch instance on AWS
 
 #### Structure
 
