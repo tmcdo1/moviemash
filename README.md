@@ -36,13 +36,28 @@ Visit the page in your browser and enjoy!
 
 #### Running the scraper and other data population
 
-Run the scraper to insert movies into the database and scrape movie synopses from IMDB
+To seed the database, make sure you are in the root directory of the project have ```movies.tsv``` with UTF-8 encoding in that directory.
 
-#### Running the time evaluation script
+`python seed.py`
+
+will seed the database in batches of 1000 movies. For each batch, the entire batch is scraped for synopses before all 1000 are inserted into elasticsearch at once.
+
+#### Running the time evaluation scripts
 
 To evaluate the use of time for the project, there is a script that uses somewhat random but vague queries, and identifies the difference between the time input and the filled up time.
 
 `python run_time_eval.py`
+
+We also have the following bash scripts for running the evaluations on queries to get NDCG-Partial:
+
+`./run_queries_eval.sh`
+`./run_keywords_eval.sh`
+
+where the latter writes the results to the file keywords_results.tsv. To evaluate your own query, you can enter:
+
+`echo <query> | python evaluations.py`
+
+To see the NDCG-Partial scores.
 
 #### Dependencies
 
@@ -61,6 +76,8 @@ All static files, such as JS and CSS, go into the `static/` directory.
 All Jinja templates for the webpage go into the `templates/` directory.
 
 All other code for ranking and logic goes into the `src/` directory.
+
+Scripts for seeding and evaluating and the input files for them are all in the root directory for the project `/` and should be run from there.
 
 ## Resources
 
