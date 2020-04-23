@@ -38,7 +38,7 @@ while True:
         num_indexed += 1
         lines_read += 1
         if num_indexed % 100 == 0:
-            print(str(num_indexed + "..."))
+            print(str(num_indexed) + "...")
     print("... finished scraping page " + str(num_indexed))
     print("Indexing last " + str(len(movie_data)) + " pages...")
     if len(movie_data) == 0:
