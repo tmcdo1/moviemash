@@ -20,12 +20,13 @@ def main():
     for arg in sys.argv[1:]:
         hours = int(arg)
 
-    possible_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    #possible_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    possible_hours = [10]#, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 
     line = "IMDB Keyword Query\t"
     for h in possible_hours:
         line += str(h) + "\t"
-    print line
+    print(line)
 
     for our_query in sys.stdin:
         if our_query == None:
@@ -39,8 +40,8 @@ def main():
                 ndcg_scores.append(0)
                 continue
 
-            #print(len(our_results))
-            #print(len(gt))
+            #print(our_results)
+            #print(gt)
 
             last_movie = our_results[len(our_results)-1]
             for i in range(len(gt)):
@@ -61,14 +62,22 @@ def main():
 
             gt_scores = normalizeish(gt_scores)
 
+            gt_titles = [movie['_source']['movie_name'] for movie in gt]
+            gt_scores_str = [movie for movie in gt_scores]
+            
+            for i in range(len(gt_titles)):
+                if i < K:
+                    print(str(gt_titles[i]) + " " + str(gt_scores_str[i]))
+            
+
             ndcg_scores.append(test.ndcg(gt_scores, our_scores))
-            #print(our_scores)
+            print(our_scores)
             #print(gt_scores)
 
         line = query + "\t"
         for ndcg_score in ndcg_scores:
             line += str(ndcg_score) + "\t"
-        print line
+        print(line)
 
 if __name__ == "__main__":
     main()
