@@ -15,8 +15,8 @@ genres = 4
 
 num_indexed = 0
 lines_read = 0
-starting_line = 444000
-ending_line = 446000
+starting_line = 0
+ending_line = 534057
 while True:
     movie_data = []
     num_at_a_time = 1000

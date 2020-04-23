@@ -20,8 +20,7 @@ def main():
     for arg in sys.argv[1:]:
         hours = int(arg)
 
-    #possible_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
-    possible_hours = [10]#, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    possible_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 
     line = "IMDB Keyword Query\t"
     for h in possible_hours:
@@ -65,13 +64,13 @@ def main():
             gt_titles = [movie['_source']['movie_name'] for movie in gt]
             gt_scores_str = [movie for movie in gt_scores]
             
-            for i in range(len(gt_titles)):
-                if i < K:
-                    print(str(gt_titles[i]) + " " + str(gt_scores_str[i]))
+            #for i in range(len(gt_titles)):
+            #    if i < K:
+            #        print(str(gt_titles[i]) + " " + str(gt_scores_str[i]))
             
 
             ndcg_scores.append(test.ndcg(gt_scores, our_scores))
-            print(our_scores)
+            #print(our_scores)
             #print(gt_scores)
 
         line = query + "\t"
